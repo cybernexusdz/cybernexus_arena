@@ -28,7 +28,7 @@ export class FighterSprite {
     c.setPosition(view.x, view.y);
     const target = view.facing >= 0 ? 1 : -1;
     c.scaleX = Math.abs(c.scaleX - target) < 0.05 ? target : c.scaleX + (target - c.scaleX) * 0.45;
-    const rot = view.state === 'ko' ? -target * 1.45 : 0;
+    const rot = !this.sprite && view.state === 'ko' ? -target * 1.45 : 0;
     c.rotation += (rot - c.rotation) * 0.35;
     const lift = Math.max(0, 1 - (ARENA.floorY - view.y) / 300);
     this.shadow.setPosition(view.x, ARENA.floorY + 4).setScale(lift, lift);
