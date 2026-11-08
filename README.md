@@ -74,6 +74,8 @@ Edit `client/src/game/assets/manifest.js` (documented inline): add a sprite shee
 
 **Split hosting:** build the client with `VITE_SERVER_URL=https://api.example.com`, host `client/dist` statically, and set the server's `CLIENT_ORIGIN` to the static site's origin.
 
+**Vercel services:** `vercel.json` routes `/api/*` and `/socket.io/*` to the Docker-backed `server` service and all other paths to the Vite `client` service. Leave `VITE_SERVER_URL` unset so the browser uses these same-origin routes. Set `JWT_SECRET` in Vercel's server-service environment. The server currently keeps rooms in process memory and account data in a local JSON file; these are not shared or durable across service instances, so use a single persistent server instance or move that state to shared durable storage before relying on multi-instance production traffic. Socket.IO also depends on Vercel's WebSocket support.
+
 **Persistence/scaling notes:** accounts live in a JSON file (mount a volume, or swap `UserStore` for a database). Room state is in-memory in one Node process (a 60 Hz sim for many rooms is light; one instance comfortably serves hundreds of rooms). To scale horizontally, shard by room code (sticky routing so all members of a room hit the same instance); room discovery would then need a shared index (e.g. Redis). Restarting the server drops live rooms.
 
 ## Honest status
