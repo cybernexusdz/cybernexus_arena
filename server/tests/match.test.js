@@ -4,7 +4,7 @@ import { Match } from '../src/game/Match.js';
 import { INPUT, STATE, TICK_RATE } from '../../shared/sim.js';
 import { DEFAULT_RULES } from '../../shared/protocol.js';
 
-const players = [{ id: 'a', name: 'A', character: 'azure' }, { id: 'b', name: 'B', character: 'crimson' }];
+const players = [{ id: 'a', name: 'A', character: 'azure' }, { id: 'b', name: 'B', character: 'solar' }];
 function mk(rules = {}) {
   const events = []; let ended = null; const snaps = [];
   const m = new Match({ players, rules: { ...DEFAULT_RULES, ...rules }, onEvent: (e) => events.push(e), onEnd: (r) => { ended = r; }, onSnapshot: (s) => snaps.push(s) });

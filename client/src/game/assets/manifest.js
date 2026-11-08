@@ -24,8 +24,6 @@
  */
 export const CHARACTER_ART = {
   azure:   { colors: { gi: 0x2f9bff, pants: 0x14305c, skin: 0xf0c8a0, accent: 0xffffff, glove: 0xe83c4a }, sheet: null },
-  crimson: { colors: { gi: 0xff3b4e, pants: 0x4a1220, skin: 0xd9a37c, accent: 0xffd43b, glove: 0x2b2b3a }, sheet: null },
-  verdant: { colors: { gi: 0x38d27a, pants: 0x143d2a, skin: 0xf4d0b0, accent: 0xffffff, glove: 0x1e2a44 }, sheet: null },
   solar:   { colors: { gi: 0xffb13b, pants: 0x4a2f10, skin: 0xb9805a, accent: 0xff3b4e, glove: 0x1e2a44 }, sheet: null },
   ethan:   {
     colors: { gi: 0x52dbe3, pants: 0x123b42, skin: 0x91e8eb, accent: 0xffffff, glove: 0x123b42 },
@@ -48,6 +46,57 @@ export const CHARACTER_ART = {
     colors: { gi: 0xe65ad5, pants: 0x35203d, skin: 0xffdff7, accent: 0xffffff, glove: 0xb632b5 },
     sheet: {
       key: 'ella', url: '/assets/characters/ella.png', frameWidth: 250, frameHeight: 250, scale: 0.65,
+      anims: {
+        idle:     { start: 0,  end: 7,  frameRate: 8,  repeat: -1 },
+        walk:     { start: 8,  end: 15, frameRate: 12, repeat: -1 },
+        jump:     { start: 16, end: 23, frameRate: 10, repeat: 0 },
+        block:    { start: 24, end: 31, frameRate: 10, repeat: -1 },
+        punch:    { start: 32, end: 39, frameRate: 18, repeat: 0 },
+        kick:     { start: 40, end: 47, frameRate: 18, repeat: 0 },
+        hit:      { start: 48, end: 55, frameRate: 14, repeat: 0 },
+        blockhit: { start: 28, end: 29, frameRate: 14, repeat: 0 },
+        ko:       { start: 56, end: 63, frameRate: 10, repeat: 0 },
+      },
+    },
+  },
+  dex:    {
+    colors: { gi: 0x29252f, pants: 0x17151c, skin: 0xc98b65, accent: 0x7658a8, glove: 0x25212b },
+    sheet: {
+      key: 'dex', url: '/assets/characters/dex.png', frameWidth: 250, frameHeight: 250, scale: 0.65,
+      anims: {
+        idle:     { start: 0,  end: 7,  frameRate: 8,  repeat: -1 },
+        walk:     { start: 8,  end: 15, frameRate: 12, repeat: -1 },
+        jump:     { start: 16, end: 23, frameRate: 10, repeat: 0 },
+        block:    { start: 24, end: 31, frameRate: 10, repeat: -1 },
+        punch:    { start: 32, end: 39, frameRate: 18, repeat: 0 },
+        kick:     { start: 40, end: 47, frameRate: 18, repeat: 0 },
+        hit:      { start: 48, end: 55, frameRate: 14, repeat: 0 },
+        blockhit: { start: 28, end: 29, frameRate: 14, repeat: 0 },
+        ko:       { start: 56, end: 63, frameRate: 10, repeat: 0 },
+      },
+    },
+  },
+  kamal:  {
+    colors: { gi: 0xd8bd8c, pants: 0x34363a, skin: 0xc98b65, accent: 0x318bd0, glove: 0x34363a },
+    sheet: {
+      key: 'kamal', url: '/assets/characters/kamal.png', frameWidth: 250, frameHeight: 250, scale: 0.65,
+      anims: {
+        idle:     { start: 0,  end: 7,  frameRate: 8,  repeat: -1 },
+        walk:     { start: 8,  end: 15, frameRate: 12, repeat: -1 },
+        jump:     { start: 16, end: 23, frameRate: 10, repeat: 0 },
+        block:    { start: 24, end: 31, frameRate: 10, repeat: -1 },
+        punch:    { start: 32, end: 39, frameRate: 18, repeat: 0 },
+        kick:     { start: 40, end: 47, frameRate: 18, repeat: 0 },
+        hit:      { start: 48, end: 55, frameRate: 14, repeat: 0 },
+        blockhit: { start: 28, end: 29, frameRate: 14, repeat: 0 },
+        ko:       { start: 56, end: 63, frameRate: 10, repeat: 0 },
+      },
+    },
+  },
+  bachir: {
+    colors: { gi: 0x292535, pants: 0xb8bec9, skin: 0xc88763, accent: 0xbc3f4c, glove: 0x292535 },
+    sheet: {
+      key: 'bachir', url: '/assets/characters/bachir.png', frameWidth: 250, frameHeight: 250, scale: 0.65,
       anims: {
         idle:     { start: 0,  end: 7,  frameRate: 8,  repeat: -1 },
         walk:     { start: 8,  end: 15, frameRate: 12, repeat: -1 },
