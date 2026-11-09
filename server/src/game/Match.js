@@ -53,6 +53,15 @@ export class Match {
     return n;
   }
 
+  resyncInputs(slot) {
+    if (slot !== 0 && slot !== 1) throw new RangeError('Invalid fighter slot.');
+    this.queues[slot] = [];
+    this.lastSeq[slot] = this.ack[slot];
+    this.lastHeld[slot] = 0;
+    this.stale[slot] = 0;
+    return this.ack[slot];
+  }
+
   #nextInput(slot) {
     const fr = this.queues[slot].shift();
     if (fr) {

@@ -50,6 +50,7 @@ client/src/
 * Snapshots go out at 30 Hz to the whole room (fighters and spectators) with full fighter state and a per-fighter `ack`.
 * **Remote fighters / spectators:** clock sync (lowest-RTT offset) + 110 ms interpolation buffer.
 * **Local fighter:** client-side prediction using the *same* `shared/sim.js`; on each snapshot it resets to server state and replays unacknowledged inputs (reconciliation), with smoothing for small errors and snapping for large ones. Attacks are also buffered 6 ticks.
+* **Reconnects:** when a fighter's socket reconnects, queued server input is cleared and the client resets its sequence from the server acknowledgement before resuming controls. Rooms and matches still live in server memory, so a server restart or a different unshared server instance ends the room rather than resuming it.
 * Hits are decided on the server at the time it processes inputs; there is no rewind/lag-compensated hit detection (a deliberate trade-off for simplicity — high-ping fighters feel the input delay on the opponent-facing side).
 
 ### Rooms

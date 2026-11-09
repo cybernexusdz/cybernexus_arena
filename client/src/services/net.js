@@ -8,13 +8,19 @@ const SERVER_EVENTS = ['room:state', 'room:none', 'room:left', 'room:closed', 'r
 class NetService {
   constructor() {
     this.socket = null; this.handlers = new Map(); this.status = 'disconnected';
-    this.offset = 0; this.rtt = 0; this.samples = []; this.syncTimer = null;
+    this.offset = 0; this.rtt = 0; this.samples = []; this.syncTimer = null; this.hasConnected = false;
   }
   connect(token) {
     this.disconnect();
-    const s = this.socket = io(URL, { auth: { token }, transports: ['websocket', 'polling'], reconnectionDelayMax: 3000 });
+    this.hasConnected = false;
+    const s = this.socket = io(URL, { auth: { token }, transports: ['websocket', 'polling'], tryAllTransports: true, reconnectionDelayMax: 3000 });
     this.#setStatus('connecting');
-    s.on('connect', () => { this.#setStatus('connected'); this.samples = []; this.#sync(); this.#burstSync(); });
+    s.on('connect', () => {
+      const reconnected = this.hasConnected;
+      this.hasConnected = true;
+      this.#setStatus('connected'); this.samples = []; this.#sync(); this.#burstSync();
+      if (reconnected) this.#emit('reconnected');
+    });
     s.on('disconnect', () => this.#setStatus('disconnected'));
     s.io.on('reconnect_attempt', () => this.#setStatus('connecting'));
     s.on('connect_error', (e) => { this.#setStatus('disconnected'); if (e.message === 'UNAUTHORIZED') this.#emit('auth:invalid'); });

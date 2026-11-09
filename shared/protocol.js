@@ -17,7 +17,7 @@ export const CHARACTERS = Object.freeze([
 export const STAGES = Object.freeze(['dojo', 'harbor', 'rooftop']);
 
 export const DEFAULT_RULES = Object.freeze({
-  roundsToWin: 2,
+  roundsToWin: 3,
   roundTime: 60,
   maxHealth: 100,
   damageMultiplier: 1,

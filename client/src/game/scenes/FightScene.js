@@ -26,6 +26,7 @@ export class FightScene extends Phaser.Scene {
     this.buffer = new SnapshotBuffer();
     this.predictor = localSlot >= 0 ? new Predictor() : null;
     this.acc = 0; this.tickCount = 0; this.outbox = []; this.visual = null; this.lastPhase = null;
+    this.awaitingInputSync = false; this.inputSyncing = false; this.inputSyncTimer = null;
     this.unsubs = []; this.cleaned = false;
 
     createStage(this, rules.stage);
@@ -39,6 +40,12 @@ export class FightScene extends Phaser.Scene {
     this.unsubs.push(
       net.on('match:state', (s) => this.#onSnapshot(s)),
       net.on('match:event', (e) => this.#onEvent(e)),
+      net.on('status', (status) => {
+        if (!this.predictor || status === 'connected') return;
+        this.awaitingInputSync = true; this.outbox = []; this.acc = 0;
+        this.hud.waiting(status === 'connecting' ? 'Reconnecting to match…' : 'Connection lost — reconnecting…');
+      }),
+      net.on('reconnected', () => this.#resyncInputs()),
     );
     const latest = this.bridge.initialSnapshot; if (latest) this.#onSnapshot(latest);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.#cleanup());
@@ -48,8 +55,36 @@ export class FightScene extends Phaser.Scene {
   #cleanup() {
     if (this.cleaned) return; this.cleaned = true;
     this.unsubs.forEach((off) => off()); this.unsubs = [];
+    clearTimeout(this.inputSyncTimer);
     this.input_?.destroy();
     this.sprites?.forEach((s) => s.destroy());
+  }
+
+  async #resyncInputs() {
+    if (!this.predictor || this.cleaned || this.inputSyncing) return;
+    clearTimeout(this.inputSyncTimer);
+    this.inputSyncTimer = null;
+    this.inputSyncing = true; this.awaitingInputSync = true; this.outbox = []; this.acc = 0;
+    this.hud.waiting('Reconnected — syncing match…');
+    try {
+      const { ack, snapshot } = await this.net.request('input:resync', {}, 4000);
+      if (this.cleaned) return;
+      this.predictor.resetSeq(ack);
+      this.buffer = new SnapshotBuffer();
+      this.visual = null;
+      this.#onSnapshot(snapshot);
+      if (this.net.status !== 'connected') return;
+      this.awaitingInputSync = false;
+      this.hud.waiting('');
+    } catch (error) {
+      console.error('Could not resync fighter inputs after reconnect:', error);
+      this.hud.waiting('Match sync failed — retrying…');
+      if (!this.cleaned && this.net.status === 'connected') {
+        this.inputSyncTimer = setTimeout(() => this.#resyncInputs(), 1500);
+      }
+    } finally {
+      this.inputSyncing = false;
+    }
   }
 
   #onSnapshot(s) {
@@ -85,10 +120,10 @@ export class FightScene extends Phaser.Scene {
   }
 
   update(time, delta) {
-    if (this.input_) { // fixed 60 Hz input + prediction
+    if (this.input_ && this.net.status === 'connected' && !this.awaitingInputSync) { // fixed 60 Hz input + prediction
       this.acc += Math.min(delta, 100) / 1000;
       while (this.acc >= DT) { this.acc -= DT; this.#fixedTick(); }
-    }
+    } else this.acc = 0;
     const meta = this.#render(time);
     if (meta) this.hud.update(meta, this.net.rtt, this.bridge.settings.showPing);
   }

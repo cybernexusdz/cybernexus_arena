@@ -43,6 +43,18 @@ test('input validation rejects replays, bad bits, absurd jumps and floods', () =
   assert.equal(m.pushInputs(2, [{ seq: 1, bits: 1 }]), 0);                             // invalid slot
 });
 
+test('input sequence can resync after a reconnect gap', () => {
+  const { m } = mk();
+  assert.equal(m.pushInputs(0, [{ seq: 1, bits: INPUT.RIGHT }]), 1);
+  m.tick(); // countdown discards queued input and acknowledges frame 1
+  assert.equal(m.snapshot().fighters[0].ack, 1);
+  assert.equal(m.pushInputs(0, [{ seq: 302, bits: INPUT.RIGHT }]), 0);
+  assert.equal(m.resyncInputs(0), 1);
+  assert.equal(m.pushInputs(0, [{ seq: 2, bits: INPUT.RIGHT }]), 1);
+  assert.equal(m.resyncInputs(1), 0);
+  assert.throws(() => m.resyncInputs(2), RangeError);
+});
+
 test('client cannot move faster than the sim: 100 queued frames still move 1 step/tick', () => {
   const { m } = mk(); startFight(m);
   for (let k = 0; k < 10; k++) m.pushInputs(0, Array.from({ length: 20 }, (_, i) => ({ seq: k * 20 + i + 1, bits: INPUT.RIGHT })));

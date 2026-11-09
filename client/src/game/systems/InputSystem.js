@@ -11,7 +11,7 @@ const PRESS = [[INPUT.PUNCH, [K.J, K.Z]], [INPUT.KICK, [K.K, K.X]]];
 /** Keyboard + on-screen (touch) input → one input bitmask per fixed tick. Attacks are edge-triggered. */
 export class InputSystem {
   constructor(scene, touch) {
-    this.touch = touch; this.pendingPress = 0; this.keys = [];
+    this.touch = touch; this.pendingPress = 0; this.keys = []; this.destroyed = false;
     const kb = scene.input.keyboard;
     this.kb = kb;
     const all = [...HELD, ...PRESS].flatMap(([, codes]) => codes);
@@ -31,8 +31,11 @@ export class InputSystem {
     return bits;
   }
   destroy() {
+    if (this.destroyed) return;
+    this.destroyed = true;
     this.kb.off('keydown', this.onDown);
     for (const { key } of this.keys) this.kb.removeKey(key);
-    this.kb.removeCapture([...HELD, ...PRESS].flatMap(([, codes]) => codes));
+    if (this.kb.manager) this.kb.removeCapture([...HELD, ...PRESS].flatMap(([, codes]) => codes));
+    this.keys = [];
   }
 }

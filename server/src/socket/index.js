@@ -67,6 +67,13 @@ export function attachSocketServer(io, { auth, manager }) {
     handle('room:ready', (p) => { mustBeInRoom().setReady(user.id, p.ready === true); });
     handle('room:character', (p) => { mustBeInRoom().setCharacter(user.id, p.character); });
     handle('room:rules', (p) => { mustBeInRoom().updateRules(user.id, p.rules); });
+    handle('input:resync', () => {
+      const room = mustBeInRoom();
+      const slot = room.fighters.indexOf(user.id);
+      if (slot < 0 || !room.match) throw new RoomError('NOT_FIGHTER', 'Only fighters can resync match input.');
+      const ack = room.match.resyncInputs(slot);
+      return { ack, snapshot: room.match.snapshot() };
+    });
     handle('room:start', () => { mustBeInRoom().startMatch(user.id); });
     handle('room:continue', () => {
       const room = mustBeInRoom();

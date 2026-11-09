@@ -10,6 +10,7 @@ export class Predictor {
   constructor() { this.seq = 0; this.pending = []; this.state = null; this.synced = false; }
   /** Continue numbering from where the server left off (needed after a reconnect). */
   syncSeq(ack) { if (!this.synced) { this.seq = ack; this.synced = true; } }
+  resetSeq(ack) { this.seq = ack; this.pending = []; this.synced = true; }
   step(bits, oppX, active) {
     const frame = { seq: ++this.seq, bits };
     this.pending.push(frame);
