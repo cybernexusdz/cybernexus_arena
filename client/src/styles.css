@@ -379,6 +379,31 @@ input:disabled, select:disabled { opacity: .58; }
 .slot.is-ready { box-shadow: inset 0 0 0 2px var(--ok), 0 0 28px #36e28a14; }
 .slot-tag { font-size: 11px; }
 .slot-name { text-shadow: 0 2px 14px #0008; }
+.slot { padding-right: 164px; }
+.slot-1 { padding-right: 22px; padding-left: 164px; }
+.slot-portrait {
+  position: absolute;
+  right: 22px;
+  bottom: 0;
+  width: 216px;
+  height: 220px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.slot-1 .slot-portrait { right: auto; left: 22px; }
+.slot-portrait::before, .slot-portrait::after { content: ""; position: absolute; z-index: 1; pointer-events: none; }
+.slot-portrait::before { inset: 35% 0 0; background: linear-gradient(180deg, transparent, #10131df2); }
+.slot-portrait::after { display: none; }
+.slot-portrait img { position: relative; z-index: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 25%; }
+.slot-portrait-0 img { transform: scale(1.13); }
+.slot-portrait-1 img { transform: scale(1.13) scaleX(-1); }
+.slot-portrait img[hidden] { display: none; }
+.slot-portrait span { position: relative; z-index: 2; color: var(--c); font: 84px var(--display); text-shadow: 0 0 26px color-mix(in srgb, var(--c) 70%, transparent); }
+.slot-portrait img:not([hidden]) + span { display: none; }
+.slot.vacant { padding-right: 22px; }
+.slot-1.vacant { padding-left: 22px; }
 .lobby-cols { gap: 14px; }
 .queue h3, .lobby-cols > section > h3 { padding-bottom: 10px; border-bottom: 1px solid #ffffff14; }
 .queue li { border-left-width: 2px; background: #0d121d; }
@@ -429,6 +454,12 @@ input:disabled, select:disabled { opacity: .58; }
   .lobby-head { align-items: center; }
   .code { padding: 5px 12px; }
   .code b { font-size: 25px; }
+  .slot { padding-right: 112px; min-height: 208px; }
+  .slot-1 { padding-right: 18px; padding-left: 112px; }
+  .slot-portrait { right: 8px; width: 142px; height: 192px; }
+  .slot-1 .slot-portrait { right: auto; left: 14px; }
+  .slot.vacant { padding-right: 18px; }
+  .slot-1.vacant { padding-left: 18px; }
   .actionbar { justify-content: stretch; }
   .actionbar > * { flex: 1 1 auto; }
   .actionbar .hint { flex-basis: 100%; margin: 0; order: -1; }

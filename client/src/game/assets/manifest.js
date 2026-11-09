@@ -23,10 +23,9 @@
  * STAGES: set `image` to a 960x540 background; omit for the procedural backdrop.
  */
 export const CHARACTER_ART = {
-  azure:   { colors: { gi: 0x2f9bff, pants: 0x14305c, skin: 0xf0c8a0, accent: 0xffffff, glove: 0xe83c4a }, sheet: null },
-  solar:   { colors: { gi: 0xffb13b, pants: 0x4a2f10, skin: 0xb9805a, accent: 0xff3b4e, glove: 0x1e2a44 }, sheet: null },
   ethan:   {
     colors: { gi: 0x52dbe3, pants: 0x123b42, skin: 0x91e8eb, accent: 0xffffff, glove: 0x123b42 },
+    portrait: '/assets/characters/ethan-face.png',
     sheet: {
       key: 'ethan', url: '/assets/characters/ethan.png', frameWidth: 250, frameHeight: 250, scale: 0.65,
       anims: {
@@ -44,6 +43,7 @@ export const CHARACTER_ART = {
   },
   ella:   {
     colors: { gi: 0xe65ad5, pants: 0x35203d, skin: 0xffdff7, accent: 0xffffff, glove: 0xb632b5 },
+    portrait: '/assets/characters/ella-face.png',
     sheet: {
       key: 'ella', url: '/assets/characters/ella.png', frameWidth: 250, frameHeight: 250, scale: 0.65,
       anims: {
@@ -61,6 +61,7 @@ export const CHARACTER_ART = {
   },
   dex:    {
     colors: { gi: 0x29252f, pants: 0x17151c, skin: 0xc98b65, accent: 0x7658a8, glove: 0x25212b },
+    portrait: '/assets/characters/dex-face.png',
     sheet: {
       key: 'dex', url: '/assets/characters/dex.png', frameWidth: 250, frameHeight: 250, scale: 0.65,
       anims: {
@@ -78,6 +79,7 @@ export const CHARACTER_ART = {
   },
   kamal:  {
     colors: { gi: 0xd8bd8c, pants: 0x34363a, skin: 0xc98b65, accent: 0x318bd0, glove: 0x34363a },
+    portrait: '/assets/characters/kamal-face.png',
     sheet: {
       key: 'kamal', url: '/assets/characters/kamal.png', frameWidth: 250, frameHeight: 250, scale: 0.65,
       anims: {
@@ -95,6 +97,7 @@ export const CHARACTER_ART = {
   },
   bachir: {
     colors: { gi: 0x292535, pants: 0xb8bec9, skin: 0xc88763, accent: 0xbc3f4c, glove: 0x292535 },
+    portrait: '/assets/characters/bachir-face.png',
     sheet: {
       key: 'bachir', url: '/assets/characters/bachir.png', frameWidth: 250, frameHeight: 250, scale: 0.65,
       anims: {
@@ -110,6 +113,8 @@ export const CHARACTER_ART = {
       },
     },
   },
+  azure:   { colors: { gi: 0x2f9bff, pants: 0x14305c, skin: 0xf0c8a0, accent: 0xffffff, glove: 0xe83c4a }, portrait: null, sheet: null },
+  solar:   { colors: { gi: 0xffb13b, pants: 0x4a2f10, skin: 0xb9805a, accent: 0xff3b4e, glove: 0x1e2a44 }, portrait: null, sheet: null },
 };
 
 export const SFX = { punch: null, kick: null, special: null, hit: null, block: null, ko: null, bell: null, tick: null };

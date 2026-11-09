@@ -6,13 +6,13 @@ export const ROOM_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 export const ROOM_CODE_LENGTH = 5;
 
 export const CHARACTERS = Object.freeze([
-  { id: 'azure', name: 'Azure', color: '#2f9bff' },
-  { id: 'solar', name: 'Solar', color: '#ffb13b' },
   { id: 'ethan', name: 'Ethan', color: '#52dbe3' },
   { id: 'ella', name: 'Ella', color: '#e65ad5' },
   { id: 'dex', name: 'Dex', color: '#7658a8' },
   { id: 'kamal', name: 'Kamal', color: '#d8bd8c' },
   { id: 'bachir', name: 'Bachir', color: '#bc3f4c' },
+  { id: 'azure', name: 'Azure', color: '#2f9bff' },
+  { id: 'solar', name: 'Solar', color: '#ffb13b' },
 ]);
 export const STAGES = Object.freeze(['dojo', 'harbor', 'rooftop']);
 
