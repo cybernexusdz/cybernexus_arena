@@ -1,5 +1,5 @@
 import {
-  TICK_RATE, INPUT, createFighter, stepFighter, separateFighters, resolveCombat, serializeFighter,
+  TICK_RATE, INPUT, STATE, SPECIAL_MOVES, createFighter, stepFighter, separateFighters, resolveCombat, serializeFighter,
 } from '../../../shared/sim.js';
 
 const COUNTDOWN_TICKS = 3 * TICK_RATE;
@@ -28,7 +28,7 @@ export class Match {
   startRound() {
     this.round++;
     const hp = this.rules.maxHealth;
-    this.fighters = SPAWNS.map((s, i) => createFighter(i, s.x, s.facing, hp));
+    this.fighters = SPAWNS.map((s, i) => createFighter(i, s.x, s.facing, hp, this.players[i].character));
     this.phase = 'countdown'; this.phaseTicks = COUNTDOWN_TICKS;
     this.timeLeft = this.rules.roundTime * TICK_RATE;
     this.emit({ type: 'roundStart', round: this.round });
@@ -82,8 +82,14 @@ export class Match {
       if (this.phaseTicks % TICK_RATE === 0) this.emit({ type: 'countdown', n: this.phaseTicks / TICK_RATE });
       if (--this.phaseTicks <= 0) { this.phase = 'fighting'; this.emit({ type: 'fight' }); }
     } else if (this.phase === 'fighting') {
+      const specialStarted = [a, b].map((fighter) => fighter.state !== STATE.SPECIAL);
       stepFighter(a, this.#nextInput(0), b.x);
       stepFighter(b, this.#nextInput(1), a.x);
+      for (const [i, fighter] of [a, b].entries()) {
+        if (specialStarted[i] && fighter.state === STATE.SPECIAL && fighter.frame === 0) {
+          this.emit({ type: 'special', attacker: i, name: SPECIAL_MOVES[fighter.character]?.name || SPECIAL_MOVES.azure.name, x: Math.round(fighter.x), y: Math.round(fighter.y) });
+        }
+      }
       separateFighters(a, b);
       for (const e of resolveCombat(a, b, this.rules)) this.emit(e);
       this.timeLeft--;

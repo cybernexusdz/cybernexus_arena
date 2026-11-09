@@ -196,9 +196,9 @@ label { display: block; color: var(--mute); font-size: 15px; } label.check { dis
 .res { --c: var(--line); padding: 14px; border: 2px solid var(--c); background: color-mix(in srgb, var(--c) 18%, var(--ink)); } .res small { display: block; color: var(--mute); letter-spacing: .15em; } .res b { font: 24px var(--display); overflow-wrap: anywhere; } .res.lose { opacity: .7; }
 .res-score { font: 44px var(--display); } .res-score span { color: var(--mute); padding: 0 6px; } .upnext { color: var(--cyan); font-size: 19px; }
 .results-actions { display: flex; gap: 12px; justify-content: center; align-items: center; margin-top: 14px; flex-wrap: wrap; }
-.touch { position: absolute; inset: auto 0 0 0; display: grid; grid-template-areas: "l r j . k p" ; grid-template-columns: repeat(6, 1fr); gap: 8px; padding: 8px; z-index: 4; touch-action: none; }
+.touch { position: absolute; inset: auto 0 0 0; display: grid; grid-template-areas: "l r j b k p s" ; grid-template-columns: repeat(7, 1fr); gap: 8px; padding: 8px; z-index: 4; touch-action: none; }
 .touch button { height: 56px; font-size: 24px; background: #141828cc; border: 2px solid var(--line); border-radius: 12px; touch-action: none; user-select: none; }
-.t-left { grid-area: l; } .t-right { grid-area: r; } .t-jump { grid-area: j; } .t-block { grid-column: 4; } .t-kick { grid-area: k; } .t-punch { grid-area: p; }
+.t-left { grid-area: l; } .t-right { grid-area: r; } .t-jump { grid-area: j; } .t-block { grid-area: b; } .t-kick { grid-area: k; } .t-punch { grid-area: p; } .t-special { grid-area: s; color: var(--cyan); border-color: #36e2ff88 !important; }
 .toasts { position: fixed; bottom: 16px; right: 16px; display: grid; gap: 8px; z-index: 50; max-width: min(360px, calc(100vw - 32px)); }
 .toast { background: var(--steel); border-left: 5px solid var(--cyan); padding: 10px 14px; box-shadow: 0 6px 20px #0008; } .toast.error { border-color: var(--blood); }
 

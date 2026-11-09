@@ -32,10 +32,21 @@ test('server applies input frames one per tick and acknowledges them', () => {
   tick(m, 2); assert.equal(m.snapshot().fighters[0].ack, 3);
 });
 
+test('match starts and broadcasts the selected fighter special', () => {
+  const { m, events } = mk();
+  startFight(m);
+  m.pushInputs(0, [{ seq: 1, bits: INPUT.SPECIAL }]);
+  tick(m, 1);
+  assert.equal(m.fighters[0].state, STATE.SPECIAL);
+  assert.equal(m.fighters[0].character, 'azure');
+  assert.ok(events.some((e) => e.type === 'special' && e.attacker === 0 && e.name === 'Rising Strike'));
+});
+
 test('input validation rejects replays, bad bits, absurd jumps and floods', () => {
   const { m } = mk(); startFight(m);
   assert.equal(m.pushInputs(0, [{ seq: 1, bits: 1 }, { seq: 1, bits: 1 }]), 1);       // duplicate
   assert.equal(m.pushInputs(0, [{ seq: 2, bits: 999 }, { seq: 3, bits: -1 }, { seq: 'x', bits: 1 }, null]), 0);
+  assert.equal(m.pushInputs(0, [{ seq: 2, bits: INPUT.SPECIAL }]), 1);
   assert.equal(m.pushInputs(0, [{ seq: 5000, bits: 1 }]), 0);                          // seq jump
   assert.equal(m.pushInputs(0, 'garbage'), 0);
   const flood = Array.from({ length: 20 }, (_, i) => ({ seq: 10 + i, bits: 1 }));
@@ -103,7 +114,9 @@ test('snapshots are emitted at 30 Hz with full fighter state', () => {
   const { m, snaps } = mk(); tick(m, 60);
   assert.equal(snaps.length, 30);
   const f = snaps.at(-1).fighters[0];
-  for (const k of ['x', 'y', 'vx', 'vy', 'facing', 'state', 'frame', 'hp', 'ack', 'buffer']) assert.ok(k in f, k);
+  for (const k of ['x', 'y', 'vx', 'vy', 'facing', 'state', 'frame', 'hp', 'ack', 'buffer', 'character', 'specialCooldown']) assert.ok(k in f, k);
+  assert.equal(f.character, 'azure');
+  assert.equal(f.specialCooldown, 0);
 });
 
 test('stale input repeats held keys briefly then stops (dropped client cannot run forever)', () => {

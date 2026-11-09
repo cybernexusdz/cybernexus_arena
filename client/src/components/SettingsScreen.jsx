@@ -12,7 +12,8 @@ export default function SettingsScreen({ onBack }) {
         <h3>Controls</h3>
         <dl className="controls">
           <dt>Move</dt><dd>A / D or ← →</dd><dt>Jump</dt><dd>W, ↑ or Space</dd><dt>Block</dt><dd>S, ↓ or Shift (face the attacker)</dd>
-          <dt>Punch</dt><dd>J or Z</dd><dt>Kick</dt><dd>K or X</dd><dt>Touch</dt><dd>On-screen buttons appear on touch devices</dd>
+          <dt>Punch</dt><dd>J or Z</dd><dt>Kick</dt><dd>K or X</dd><dt>Special</dt><dd>L (unique to your fighter; six-second cooldown)</dd>
+          <dt>Touch</dt><dd>On-screen buttons appear on touch devices</dd>
         </dl>
       </div>
     </div>

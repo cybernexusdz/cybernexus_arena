@@ -6,7 +6,7 @@ const K = Phaser.Input.Keyboard.KeyCodes;
 const HELD = [
   [INPUT.LEFT, [K.A, K.LEFT]], [INPUT.RIGHT, [K.D, K.RIGHT]], [INPUT.JUMP, [K.W, K.UP, K.SPACE]], [INPUT.BLOCK, [K.S, K.DOWN, K.SHIFT]],
 ];
-const PRESS = [[INPUT.PUNCH, [K.J, K.Z]], [INPUT.KICK, [K.K, K.X]]];
+const PRESS = [[INPUT.PUNCH, [K.J, K.Z]], [INPUT.KICK, [K.K, K.X]], [INPUT.SPECIAL, [K.L]]];
 
 /** Keyboard + on-screen (touch) input → one input bitmask per fixed tick. Attacks are edge-triggered. */
 export class InputSystem {

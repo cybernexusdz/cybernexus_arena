@@ -5,10 +5,10 @@ export const TICK_RATE = 60;
 export const DT = 1 / TICK_RATE;
 export const ARENA = Object.freeze({ width: 960, height: 540, floorY: 470, minX: 50, maxX: 910 });
 export const BODY = Object.freeze({ width: 56, height: 130 });
-export const INPUT = Object.freeze({ LEFT: 1, RIGHT: 2, JUMP: 4, BLOCK: 8, PUNCH: 16, KICK: 32, HELD_MASK: 15, ALL: 63 });
+export const INPUT = Object.freeze({ LEFT: 1, RIGHT: 2, JUMP: 4, BLOCK: 8, PUNCH: 16, KICK: 32, SPECIAL: 64, HELD_MASK: 15, ALL: 127 });
 export const STATE = Object.freeze({
   IDLE: 'idle', WALK: 'walk', JUMP: 'jump', BLOCK: 'block', PUNCH: 'punch',
-  KICK: 'kick', HIT: 'hit', BLOCKHIT: 'blockhit', KO: 'ko',
+  KICK: 'kick', SPECIAL: 'special', HIT: 'hit', BLOCKHIT: 'blockhit', KO: 'ko',
 });
 export const PHYS = Object.freeze({
   walkSpeed: 270, jumpVelocity: -820, gravity: 2300,
@@ -19,6 +19,16 @@ export const MOVES = Object.freeze({
   punch: Object.freeze({ startup: 5, active: 3, recovery: 9, damage: 7, reach: 62, high: 112, low: 82, knockback: 200, hitstun: 16, blockstun: 9 }),
   kick: Object.freeze({ startup: 9, active: 4, recovery: 15, damage: 12, reach: 88, high: 72, low: 14, knockback: 360, hitstun: 24, blockstun: 13 }),
 });
+const special = (name, move) => Object.freeze({ name, cooldown: 6 * TICK_RATE, move: Object.freeze(move) });
+export const SPECIAL_MOVES = Object.freeze({
+  azure: special('Rising Strike', { startup: 10, active: 3, recovery: 27, damage: 15, reach: 78, high: 126, low: 48, knockback: 300, hitstun: 23, blockstun: 14 }),
+  solar: special('Solar Sweep', { startup: 15, active: 5, recovery: 30, damage: 18, reach: 102, high: 85, low: 8, knockback: 370, hitstun: 25, blockstun: 16 }),
+  ethan: special('Overdrive Jab', { startup: 8, active: 3, recovery: 25, damage: 13, reach: 92, high: 108, low: 58, knockback: 250, hitstun: 20, blockstun: 12 }),
+  ella: special('Crescent Kick', { startup: 13, active: 4, recovery: 29, damage: 16, reach: 96, high: 102, low: 18, knockback: 320, hitstun: 24, blockstun: 15 }),
+  dex: special('Shadow Elbow', { startup: 9, active: 3, recovery: 34, damage: 17, reach: 72, high: 114, low: 48, knockback: 420, hitstun: 27, blockstun: 18 }),
+  kamal: special('Iron Breaker', { startup: 18, active: 4, recovery: 36, damage: 20, reach: 80, high: 100, low: 34, knockback: 460, hitstun: 30, blockstun: 20 }),
+  bachir: special('Sandstorm Hook', { startup: 12, active: 4, recovery: 28, damage: 16, reach: 84, high: 120, low: 54, knockback: 360, hitstun: 25, blockstun: 16 }),
+});
 export const CHIP_RATIO = 0.15;
 export const moveDuration = (m) => m.startup + m.active + m.recovery;
 
@@ -26,8 +36,8 @@ const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const r2 = (v) => Math.round(v * 100) / 100;
 const setState = (f, s) => { f.state = s; f.frame = 0; };
 
-export function createFighter(slot, x, facing, hp) {
-  return { slot, x, y: ARENA.floorY, vx: 0, vy: 0, kx: 0, facing, state: STATE.IDLE, frame: 0, stun: 0, hp, hasHit: false, buffer: null };
+export function createFighter(slot, x, facing, hp, character = 'azure') {
+  return { slot, character, x, y: ARENA.floorY, vx: 0, vy: 0, kx: 0, facing, state: STATE.IDLE, frame: 0, stun: 0, hp, hasHit: false, buffer: null, specialCooldown: 0 };
 }
 export const cloneFighter = (f) => ({ ...f, buffer: f.buffer ? { ...f.buffer } : null });
 export function serializeFighter(f) {
@@ -39,7 +49,9 @@ export function serializeFighter(f) {
 function freeControl(f, bits, oppX, grounded) {
   if (oppX != null && grounded) f.facing = oppX >= f.x ? 1 : -1;
   if (grounded && f.buffer) {
-    setState(f, f.buffer.move);
+    const move = f.buffer.move;
+    if (move === STATE.SPECIAL) f.specialCooldown = SPECIAL_MOVES[f.character]?.cooldown ?? SPECIAL_MOVES.azure.cooldown;
+    setState(f, move);
     f.hasHit = false; f.vx = 0; f.buffer = null;
     return;
   }
@@ -55,9 +67,12 @@ function freeControl(f, bits, oppX, grounded) {
 /** Advance one fighter by one tick. `bits` = input bitmask, `oppX` = opponent x (for facing). */
 export function stepFighter(f, bits = 0, oppX = null) {
   f.frame++;
+  if (f.specialCooldown > 0) f.specialCooldown--;
   if (f.buffer && --f.buffer.ttl <= 0) f.buffer = null;
   if (f.state !== STATE.KO) {
-    const press = (bits & INPUT.PUNCH) ? STATE.PUNCH : (bits & INPUT.KICK) ? STATE.KICK : null;
+    const press = (bits & INPUT.SPECIAL) && f.specialCooldown === 0 ? STATE.SPECIAL
+      : (bits & INPUT.PUNCH) ? STATE.PUNCH
+        : (bits & INPUT.KICK) ? STATE.KICK : null;
     if (press) f.buffer = { move: press, ttl: PHYS.inputBufferTicks };
   }
   const grounded = f.y >= ARENA.floorY;
@@ -70,7 +85,8 @@ export function stepFighter(f, bits = 0, oppX = null) {
       break;
     case STATE.PUNCH:
     case STATE.KICK:
-      if (f.frame >= moveDuration(MOVES[f.state])) setState(f, STATE.IDLE);
+    case STATE.SPECIAL:
+      if (f.frame >= moveDuration(getMove(f))) setState(f, STATE.IDLE);
       break;
     default: freeControl(f, bits, oppX, grounded);
   }
@@ -96,13 +112,16 @@ export function separateFighters(a, b) {
   b.x = clamp(b.x + dir * push, ARENA.minX, ARENA.maxX);
 }
 
-export const isAttacking = (f) => f.state === STATE.PUNCH || f.state === STATE.KICK;
+const getMove = (f) => f.state === STATE.SPECIAL
+  ? (SPECIAL_MOVES[f.character]?.move ?? SPECIAL_MOVES.azure.move)
+  : MOVES[f.state];
+export const isAttacking = (f) => f.state === STATE.PUNCH || f.state === STATE.KICK || f.state === STATE.SPECIAL;
 export function getHurtbox(f) {
   return { x1: f.x - BODY.width / 2, x2: f.x + BODY.width / 2, y1: f.y - BODY.height, y2: f.y };
 }
 export function getHitbox(f) {
   if (!isAttacking(f)) return null;
-  const m = MOVES[f.state];
+  const m = getMove(f);
   if (f.frame < m.startup || f.frame >= m.startup + m.active) return null;
   const a = f.x + f.facing * (BODY.width / 2 - 4), b = f.x + f.facing * (BODY.width / 2 + m.reach);
   return { x1: Math.min(a, b), x2: Math.max(a, b), y1: f.y - m.high, y2: f.y - m.low };
@@ -139,7 +158,7 @@ export function resolveCombat(a, b, rules) {
   for (const [att, def] of [[a, b], [b, a]]) {
     if (!isAttacking(att) || att.hasHit || def.state === STATE.KO) continue;
     const hb = getHitbox(att);
-    if (hb && overlaps(hb, getHurtbox(def))) hits.push([att, def, MOVES[att.state], hb]);
+    if (hb && overlaps(hb, getHurtbox(def))) hits.push([att, def, getMove(att), hb]);
   }
   const events = [];
   for (const [att, def, move, hb] of hits) applyHit(att, def, move, hb, rules, events);

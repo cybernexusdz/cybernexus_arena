@@ -2,7 +2,7 @@ import { INPUT } from '@shared/sim.js';
 
 const BTN = [
   ['◀', INPUT.LEFT, false, 'left'], ['▶', INPUT.RIGHT, false, 'right'], ['▲', INPUT.JUMP, false, 'jump'],
-  ['🛡', INPUT.BLOCK, false, 'block'], ['👊', INPUT.PUNCH, true, 'punch'], ['🦶', INPUT.KICK, true, 'kick'],
+  ['🛡', INPUT.BLOCK, false, 'block'], ['👊', INPUT.PUNCH, true, 'punch'], ['🦶', INPUT.KICK, true, 'kick'], ['✦', INPUT.SPECIAL, true, 'special'],
 ];
 /** On-screen controls for touch devices; writes into the bridge's `touch` state read by InputSystem. */
 export default function TouchControls({ bridge }) {

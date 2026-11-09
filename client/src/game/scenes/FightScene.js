@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { DT } from '@shared/sim.js';
+import { CHARACTERS } from '@shared/protocol.js';
 import { FighterSprite } from '../entities/FighterSprite.js';
 import { createStage } from '../entities/StageRenderer.js';
 import { Hud } from '../ui/Hud.js';
@@ -103,9 +104,17 @@ export class FightScene extends Phaser.Scene {
       case 'roundStart': this.hud.announce(`ROUND ${e.round}`, { hold: 1500, size: 72 }); this.audio.play('bell'); break;
       case 'countdown': this.audio.play('tick'); this.hud.announce(String(e.n), { hold: 500, size: 110, color: '#ffc83d' }); break;
       case 'fight': this.hud.announce('FIGHT!', { color: '#ff3b4e', hold: 600 }); this.audio.play('bell'); break;
+      case 'special': {
+        const character = this.bridge.players[e.attacker]?.character;
+        const tint = parseInt(CHARACTERS.find((c) => c.id === character)?.color.slice(1) || 'ffffff', 16);
+        this.fx.spark(e.x, e.y - 65, tint, true);
+        this.hud.announce(e.name.toUpperCase(), { color: '#36e2ff', hold: 450, size: 38 });
+        this.audio.play('special');
+        break;
+      }
       case 'hit':
-        this.fx.spark(e.x, e.y, 0xffe066, e.damage >= 10); this.sprites[e.defender]?.flash();
-        this.audio.play(e.move === 'kick' ? 'kick' : 'punch'); this.audio.play('hit'); break;
+        this.fx.spark(e.x, e.y, e.move === 'special' ? 0x36e2ff : 0xffe066, e.damage >= 10); this.sprites[e.defender]?.flash();
+        this.audio.play(e.move === 'special' ? 'special' : e.move === 'kick' ? 'kick' : 'punch'); this.audio.play('hit'); break;
       case 'block': this.fx.guard(e.x, e.y); this.audio.play('block'); break;
       case 'ko': this.fx.spark(e.x, e.y, 0xff3b4e, true); this.audio.play('ko'); break;
       case 'roundEnd': {

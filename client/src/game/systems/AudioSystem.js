@@ -3,6 +3,7 @@ import { SFX } from '../assets/manifest.js';
 // name -> [startFreq, endFreq, seconds, waveform, gain]
 const SYNTH = {
   punch: [220, 90, 0.08, 'square', 0.18], kick: [160, 50, 0.13, 'sawtooth', 0.22], hit: [140, 40, 0.14, 'square', 0.3],
+  special: [440, 70, 0.24, 'sawtooth', 0.26],
   block: [520, 300, 0.07, 'triangle', 0.2], ko: [260, 30, 0.7, 'sawtooth', 0.3], bell: [880, 880, 0.5, 'sine', 0.2], tick: [660, 660, 0.06, 'sine', 0.12],
 };
 

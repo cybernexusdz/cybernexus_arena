@@ -1,6 +1,6 @@
 // Procedural placeholder fighter: a posed skeleton drawn with Phaser Graphics.
 // Angles are absolute, in radians, 0 = pointing down, + = toward the fighter's facing direction.
-import { MOVES } from '@shared/sim.js';
+import { MOVES, SPECIAL_MOVES } from '@shared/sim.js';
 
 const T = 34, S = 34, UA = 24, FA = 24, TORSO = 46;
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -12,7 +12,7 @@ const envelope = (frame, m) => { // 0 → wind-up/startup, 1 → full extension 
   return Math.max(0, 1 - (frame - m.startup - m.active) / m.recovery);
 };
 
-function pose(state, frame, t) {
+function pose(state, frame, t, character) {
   const p = { lean: 0.08, crouch: 0, plant: 'both', legF: [0.35, 0.1], legB: [-0.3, -0.05], armF: [0.9, 2.3], armB: [0.5, 2.0], shake: 0 };
   const breathe = Math.sin(t / 220) * 1.5;
   switch (state) {
@@ -35,6 +35,13 @@ function pose(state, frame, t) {
       p.plant = 'back'; p.legF = [lerp(0.35, 1.5, e), lerp(-0.2, 1.55, e)]; p.legB = [-0.1, -0.05];
       p.lean = 0.08 - 0.3 * Math.max(e, 0); p.armF = [0.9, 2.3]; p.armB = [-0.9 * Math.max(e, 0), -0.3]; break;
     }
+    case 'special': {
+      const e = envelope(frame, SPECIAL_MOVES[character]?.move || MOVES.kick);
+      p.armF = [lerp(0.9, 1.57, e), lerp(2.3, 1.57, e)];
+      p.armB = [lerp(0.5, 1.15, e), lerp(2, 1.65, e)];
+      p.lean = 0.08 + 0.4 * e; p.crouch = 5 + 6 * e;
+      p.legF = [0.5 + 0.35 * e, 0.3]; break;
+    }
     case 'hit': p.lean = -0.5; p.armF = [-0.7, -0.4]; p.armB = [-0.5, 0.2]; p.legF = [0.5, 0.2]; p.legB = [-0.5, -0.1]; p.crouch = 6; p.shake = 2; break;
     case 'ko': p.lean = -0.1; p.armF = [0.6, 0.9]; p.armB = [0.3, 0.6]; p.legF = [0.4, 0.2]; p.legB = [-0.3, -0.2]; break;
     default: break;
@@ -51,8 +58,8 @@ function limb(g, o, a1, a2, l1, l2, color, w) {
 const shade = (c, k) => ((((c >> 16) & 255) * k) << 16) | ((((c >> 8) & 255) * k) << 8) | ((c & 255) * k);
 
 /** Draw one fighter into Graphics `g` (origin = feet, facing +x). `flash` renders a white hit-flash. */
-export function drawRig(g, colors, state, frame, t, flash = false) {
-  const P = pose(state, frame, t);
+export function drawRig(g, colors, state, frame, t, flash = false, character) {
+  const P = pose(state, frame, t, character);
   const gi = flash ? 0xffffff : colors.gi, pants = flash ? 0xffffff : colors.pants, skin = flash ? 0xffffff : colors.skin;
   const jitter = P.shake ? (Math.random() - 0.5) * P.shake : 0;
   const dF = depth(...P.legF), dB = depth(...P.legB);

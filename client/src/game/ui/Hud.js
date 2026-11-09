@@ -1,4 +1,5 @@
 import { CHARACTERS } from '@shared/protocol.js';
+import { SPECIAL_MOVES } from '@shared/sim.js';
 
 const FONT = '"Russo One", Impact, "Arial Black", sans-serif';
 const BAR_W = 390, BAR_H = 24, BAR_Y = 26, MARGIN = 36;
@@ -18,12 +19,14 @@ export class Hud {
     this.timer = t(480, 14, '60', { fontSize: '44px', stroke: '#000', strokeThickness: 5 }).setOrigin(0.5, 0);
     this.round = t(480, 62, '', { fontSize: '14px', color: '#ffc83d' }).setOrigin(0.5, 0);
     this.role = t(480, 516, '', { fontSize: '15px', color: '#9fb0c8' }).setOrigin(0.5, 0.5);
+    this.special = t(480, 489, '', { fontSize: '13px', color: '#36e2ff' }).setOrigin(0.5, 0.5);
     this.ping = t(948, 516, '', { fontSize: '12px', color: '#9fb0c8' }).setOrigin(1, 0.5);
     this.banner = t(480, 220, '', { fontSize: '92px', stroke: '#000', strokeThickness: 10 }).setOrigin(0.5).setAlpha(0);
     this.sub = t(480, 290, '', { fontSize: '22px', color: '#ffc83d', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5).setAlpha(0);
     this.status = t(480, 270, '', { fontSize: '22px', color: '#9fb0c8' }).setOrigin(0.5).setDepth(102);
-    const label = localSlot >= 0 ? `YOU ARE P${localSlot + 1}  ·  A/D move  W jump  S block  J punch  K kick` : 'SPECTATING';
+    const label = localSlot >= 0 ? `YOU ARE P${localSlot + 1}  ·  A/D move  W jump  S block  J punch  K kick  L special` : 'SPECTATING';
     this.role.setText(label);
+    this.specialName = localSlot >= 0 ? SPECIAL_MOVES[players[localSlot].character]?.name : null;
   }
 
   update(meta, ping, showPing) {
@@ -45,6 +48,10 @@ export class Hud {
     this.timer.setText(String(Math.max(0, meta.timer)).padStart(2, '0')).setColor(meta.timer <= 10 ? '#ff3b4e' : '#f3ecdc');
     this.round.setText(`ROUND ${meta.round}`);
     this.ping.setText(showPing ? `${ping} ms` : '');
+    if (this.specialName) {
+      const cooldown = meta.fighters[this.localSlot].specialCooldown || 0;
+      this.special.setText(cooldown > 0 ? `${this.specialName.toUpperCase()}  ·  ${(cooldown / 60).toFixed(1)}s  ·  L` : `${this.specialName.toUpperCase()} READY  ·  L`);
+    }
     this.status.setText('');
   }
   waiting(text) { this.status.setText(text); }

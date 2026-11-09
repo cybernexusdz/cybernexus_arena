@@ -7,6 +7,7 @@ import { drawRig } from './rig.js';
 export class FighterSprite {
   constructor(scene, characterId, depth = 5) {
     this.scene = scene;
+    this.characterId = characterId;
     this.art = CHARACTER_ART[characterId] || CHARACTER_ART.azure;
     this.shadow = scene.add.ellipse(0, ARENA.floorY + 4, 70, 14, 0x000000, 0.4).setDepth(1);
     this.container = scene.add.container(0, ARENA.floorY).setDepth(depth);
@@ -34,12 +35,13 @@ export class FighterSprite {
     this.shadow.setPosition(view.x, ARENA.floorY + 4).setScale(lift, lift);
     if (this.sprite) {
       if (this.lastState !== view.state) {
-        const key = `${this.art.sheet.key}-${view.state}`;
+        const state = view.state === 'special' && !this.scene.anims.exists(`${this.art.sheet.key}-special`) ? 'kick' : view.state;
+        const key = `${this.art.sheet.key}-${state}`;
         this.sprite.play(this.scene.anims.exists(key) ? key : `${this.art.sheet.key}-idle`, true);
         this.lastState = view.state;
       }
     } else {
-      drawRig(this.g, this.art.colors, view.state, view.frame, time, this.scene.time.now < this.flashUntil);
+      drawRig(this.g, this.art.colors, view.state, view.frame, time, this.scene.time.now < this.flashUntil, this.characterId);
     }
   }
   destroy() { this.container.destroy(); this.shadow.destroy(); }

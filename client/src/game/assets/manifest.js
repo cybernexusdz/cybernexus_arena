@@ -112,7 +112,7 @@ export const CHARACTER_ART = {
   },
 };
 
-export const SFX = { punch: null, kick: null, hit: null, block: null, ko: null, bell: null, tick: null };
+export const SFX = { punch: null, kick: null, special: null, hit: null, block: null, ko: null, bell: null, tick: null };
 
 export const STAGE_ART = {
   dojo:    { image: null, sky: [0x1a0f2e, 0x5a1d3a], sun: 0xff6a4d, far: 0x2a1530, near: 0x180c22, floor: 0x3b2430, line: 0xff6a4d },

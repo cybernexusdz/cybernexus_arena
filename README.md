@@ -19,7 +19,7 @@ Open http://localhost:5173 in two or more browser windows (use a private window 
 | `npm run build` | production client build → `client/dist` |
 | `npm start` | production server; also serves `client/dist` if present |
 
-**Controls:** A/D move · W/Space jump · S/Shift block (face the attacker) · J punch · K kick. Touch buttons appear on touch devices.
+**Controls:** A/D move · W/Space jump · S/Shift block (face the attacker) · J punch · K kick · L character special (six-second cooldown). Touch buttons appear on touch devices.
 
 ## Environment
 
@@ -46,6 +46,7 @@ client/src/
 
 ### Netcode
 * Clients send **only input bitmasks** (`{seq, bits}`), batched at 30 Hz. The server consumes exactly one frame per 60 Hz tick per fighter, so a client can't act faster than real time.
+* Specials are character-specific move data in `shared/sim.js`; startup, active frames, recovery, damage, range, stun and cooldown are resolved by the same server-authoritative simulation used for prediction.
 * Server validates every frame (type, range, strictly increasing `seq`, bounded jump, bounded queue), ignores spectators' input, rate-limits sockets, and computes movement, hit detection, blocking, damage, knockback, KO, timer and rounds itself.
 * Snapshots go out at 30 Hz to the whole room (fighters and spectators) with full fighter state and a per-fighter `ack`.
 * **Remote fighters / spectators:** clock sync (lowest-RTT offset) + 110 ms interpolation buffer.
@@ -66,7 +67,7 @@ Server→client: `room:state`, `room:none|left|closed|kicked|notice|rotated`, `m
 Edit `client/src/game/assets/manifest.js` (documented inline): add a sprite sheet + per-state animation ranges per character, background images per stage, and SFX URLs (put files in `client/public/assets/...`). Add new character ids in `shared/protocol.js` so the server accepts them. The procedural rig (`entities/rig.js`) is used whenever a character has no `sheet`.
 
 ## Tests
-`npm test` runs 56 tests: combat frame data/blocking/KO/trades/determinism, match flow/validation/anti-speedhack, room lifecycle (cap, codes, privacy, host migration, reconnect, grace expiry, rotation modes, cleanup, rules, kick) and auth.
+`npm test` runs the server and simulation regression suite: combat frame data/blocking/KO/trades/specials/determinism, match flow/validation/anti-speedhack, room lifecycle (cap, codes, privacy, host migration, reconnect, grace expiry, rotation modes, cleanup, rules, kick) and auth.
 
 ## Deployment
 **Single container (simplest):** `docker build -t fury-arena . && docker run -p 3001:3001 -e JWT_SECRET=$(openssl rand -hex 32) -v fury-data:/app/server/data fury-arena`. Works on Fly.io, Railway, Render, a VPS, etc. — it needs a host that allows **long-lived WebSocket connections** (not serverless functions).
