@@ -7,7 +7,10 @@ export default function TopBar() {
   const { status, latency, room } = useRoom();
   return (
     <header className="topbar">
-      <div className="logo">CYBERNEXUS<span>ARENA</span></div>
+      <div className="topbar-brand">
+        <img className="brand-logo" src="/assets/logo.svg" alt="" />
+        <span className="topbar-brand-name">CYBERNEXUS <b>ARENA</b><small>ONLINE FIGHTING ARENA</small></span>
+      </div>
       {status !== 'connected' && <div className="banner-warn" role="status">{status === 'connecting' ? 'Connection lost — reconnecting. Your seat is held for 30 seconds.' : 'Offline.'}</div>}
       <div className="topbar-right">
         <ConnectionBadge status={status} latency={latency} />

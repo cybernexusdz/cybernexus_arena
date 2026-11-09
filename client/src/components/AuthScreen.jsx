@@ -22,7 +22,7 @@ export default function AuthScreen() {
   return (
     <div className="landing">
       <header className="landing-top">
-        <div className="landing-brand"><span className="brand-mark"><i>CN</i></span><span>CYBERNEXUS <b>ARENA</b></span></div>
+        <div className="landing-brand"><img className="brand-logo" src="/assets/logo.svg" alt="" /><span>CYBERNEXUS <b>ARENA</b></span></div>
         <div className="landing-live"><i /> ONLINE FIGHTING ARENA</div>
       </header>
       <main className="auth">
