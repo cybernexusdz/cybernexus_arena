@@ -1,6 +1,7 @@
 import { useAuth } from '../context/AuthContext.jsx';
 import { useRoom } from '../context/RoomContext.jsx';
 import ConnectionBadge from './ConnectionBadge.jsx';
+import MusicToggle from './MusicToggle.jsx';
 
 export default function TopBar() {
   const { user, logout } = useAuth();
@@ -14,6 +15,7 @@ export default function TopBar() {
       {status !== 'connected' && <div className="banner-warn" role="status">{status === 'connecting' ? 'Connection lost — reconnecting. Your seat is held for 30 seconds.' : 'Offline.'}</div>}
       <div className="topbar-right">
         <ConnectionBadge status={status} latency={latency} />
+        <MusicToggle />
         <span className="who">{user.name}{user.guest ? ' (guest)' : ` · ${user.wins}W ${user.losses}L`}</span>
         {!room && <button className="btn btn-ghost" onClick={logout}>Sign out</button>}
       </div>

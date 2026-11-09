@@ -66,6 +66,8 @@ Server→client: `room:state`, `room:none|left|closed|kicked|notice|rotated`, `m
 ## Replacing the placeholder art/sound
 Edit `client/src/game/assets/manifest.js` (documented inline): add a sprite sheet + per-state animation ranges per character, background images per stage, and SFX URLs (put files in `client/public/assets/...`). Add new character ids in `shared/protocol.js` so the server accepts them. The procedural rig (`entities/rig.js`) is used whenever a character has no `sheet`.
 
+The website's looping menu music is separate from in-game audio. Put the track at `client/public/assets/music/menu.mp3`; it plays on site screens, pauses during matches/results, and can be disabled from the music toggle or Settings. Browsers may wait for the first user interaction before allowing playback.
+
 ## Tests
 `npm test` runs the server and simulation regression suite: combat frame data/blocking/KO/trades/specials/determinism, match flow/validation/anti-speedhack, room lifecycle (cap, codes, privacy, host migration, reconnect, grace expiry, rotation modes, cleanup, rules, kick) and auth.
 

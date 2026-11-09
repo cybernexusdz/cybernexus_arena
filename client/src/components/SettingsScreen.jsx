@@ -7,6 +7,7 @@ export default function SettingsScreen({ onBack }) {
       <div className="screen-head"><button className="btn btn-ghost" onClick={onBack}>Back</button><h2>Settings</h2><span /></div>
       <div className="panel form-grid">
         <label>Volume: {settings.volume}%<input type="range" min="0" max="100" value={settings.volume} onChange={(e) => update({ volume: Number(e.target.value) })} /></label>
+        <label className="check"><input type="checkbox" checked={settings.musicEnabled} onChange={(e) => update({ musicEnabled: e.target.checked })} /> Site music (pauses during matches)</label>
         <label className="check"><input type="checkbox" checked={settings.shake} onChange={(e) => update({ shake: e.target.checked })} /> Screen shake on heavy hits</label>
         <label className="check"><input type="checkbox" checked={settings.showPing} onChange={(e) => update({ showPing: e.target.checked })} /> Show ping in match</label>
         <h3>Controls</h3>

@@ -11,6 +11,7 @@ import SettingsScreen from './components/SettingsScreen.jsx';
 import Lobby from './components/Lobby.jsx';
 import MatchView from './components/MatchView.jsx';
 import Toasts from './components/Toasts.jsx';
+import AmbientMusic from './components/AmbientMusic.jsx';
 
 function Shell() {
   const { user, ready } = useAuth();
@@ -40,7 +41,10 @@ export default function App() {
     <SettingsProvider>
       <AuthProvider>
         <RoomProvider>
-          <Shell />
+          <>
+            <AmbientMusic />
+            <Shell />
+          </>
         </RoomProvider>
       </AuthProvider>
     </SettingsProvider>

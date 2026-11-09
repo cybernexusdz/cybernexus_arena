@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
+import MusicToggle from './MusicToggle.jsx';
 
 export default function AuthScreen() {
   const { guest, login, register } = useAuth();
@@ -23,7 +24,7 @@ export default function AuthScreen() {
     <div className="landing">
       <header className="landing-top">
         <div className="landing-brand"><img className="brand-logo" src="/assets/logo.svg" alt="" /><span>CYBERNEXUS <b>ARENA</b></span></div>
-        <div className="landing-live"><i /> ONLINE FIGHTING ARENA</div>
+        <div className="landing-header-right"><MusicToggle className="landing-music" /><div className="landing-live"><i /> ONLINE FIGHTING ARENA</div></div>
       </header>
       <main className="auth">
         <section className="auth-hero" aria-labelledby="landing-title">

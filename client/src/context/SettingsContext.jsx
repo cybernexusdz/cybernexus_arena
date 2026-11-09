@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 const KEY = 'fury.settings';
-const DEFAULTS = { volume: 70, shake: true, showPing: true };
+const DEFAULTS = { volume: 70, shake: true, showPing: true, musicEnabled: true };
 const Ctx = createContext(null);
 export const useSettings = () => useContext(Ctx);
 
